@@ -49,17 +49,19 @@
         (function () {
             'use strict';
 
-            // URLからIDを取得する関数
+            // 現在のURLからidを取得する関数
             function getIdFromUrl(url) {
                 const urlParts = url.split('/');
                 const idIndex = urlParts.indexOf('app') + 1;
                 return idIndex < urlParts.length ? urlParts[idIndex] : null;
             }
 
-            // 現在のURLを取得
-            const currentUrl = window.location.href;
-            // IDを取得
-            const id = getIdFromUrl(currentUrl);
+            // URLパラメータからidを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            let id = urlParams.get('id');
+
+            // URLから取得したIDで上書き
+            id = getIdFromUrl(window.location.href) || id;
 
             var player = new P.player.Player();
             var splash = document.querySelector('.splash');
