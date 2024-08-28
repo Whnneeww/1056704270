@@ -75,8 +75,8 @@
     </div>
     <div class="error">
         <div>
-            <h1>forkphorus</h1>
-            <p class="error-report"></p>
+            <h1>エラーが発生しました</h1>
+            <p class="error-report">プロジェクトの読み込みに失敗しました。<a href="#" onclick="location.reload();">ページを再読み込み</a></p>
         </div>
     </div>
     <script src="lib/scratch-sb1-converter.js"></script>
@@ -107,8 +107,8 @@
             var player = new P.player.Player();
             var splash = document.querySelector('.splash');
             var error = document.querySelector('.error');
-            var progressBar = document.querySelector('.progress');
             var progressBarFill = document.querySelector('.progress-bar');
+
             var errorHandler = new P.player.ErrorHandler(player, {
                 container: document.querySelector('.error-report'),
             });
@@ -120,32 +120,13 @@
             player.onerror.subscribe(function(e) {
                 player.exitFullscreen();
                 error.style.display = 'table';
+                // エラーメッセージの表示
+                errorHandler.displayErrorMessage(e);
             });
 
             document.querySelector('.player').appendChild(player.root);
-            document.addEventListener('touchmove', function(e) {
-                e.preventDefault();
-            }, { passive: false });
 
-            Common.parseSearch(function(key, value) {
-                switch (key) {
-                    case 'full-screen':
-                        player.setOptions({ fullscreenMaxWidth: value !== 'false' ? Infinity : 480 });
-                        break;
-                    case 'w':
-                        player.setOptions({ fullscreenMaxWidth: Number(value) || 480 });
-                        break;
-                    case 'controls':
-                        player.addControls({ enableFullscreen: false });
-                        break;
-                }
-            });
-
-            // do not focus the stage when embedded
-            if (!window.parent || window.parent === window) {
-                player.setOptions({ focusOnLoad: false });
-            }
-
+            // プレイヤーのオプション設定
             player.setOptions(Common.playerOptions);
             player.setOptions({
                 fullscreenMode: 'window',
@@ -156,13 +137,10 @@
                 .then(function() {
                     player.enterFullscreen();
                     splash.style.display = 'none';
+                })
+                .catch(function() {
+                    error.style.display = 'table'; // ここでエラーが発生したとき
                 });
-
-            player.getProjectMeta().load().then((meta) => {
-                if (meta.getTitle()) {
-                    document.title = meta.getTitle();
-                }
-            });
 
             // 取得したIDをコンソールに表示
             console.log("取得したID:", id);
