@@ -58,10 +58,9 @@
 
             // URLパラメータからidを取得
             const urlParams = new URLSearchParams(window.location.search);
-            let id = urlParams.get('id');
+            let id =  getIdFromUrl(window.location.href) || id;
 
             // URLから取得したIDで上書き
-            id = getIdFromUrl(window.location.href) || id;
 
             var player = new P.player.Player();
             var splash = document.querySelector('.splash');
