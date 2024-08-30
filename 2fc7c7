@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ファイルダウンロードプログラム</title>
+</head>
+<body>
+    <h1>URLからファイルを取得してダウンロードする</h1>
+    <input type="text" id="urlInput" placeholder="ダウンロードするURLを入力">
+    <button id="downloadButton">ダウンロード</button>
+
+    <script>
+        document.getElementById('downloadButton').addEventListener('click', async () => {
+            const url = document.getElementById('urlInput').value;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('ネットワークエラー: ' + response.statusText);
+                }
+                const blob = await response.blob();
+                const a = document.createElement('a');
+                const objectURL = URL.createObjectURL(blob);
+                a.href = objectURL;
+                a.download = url.split('/').pop(); // URLの最後の部分をファイル名に設定
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(objectURL);
+                alert('ダウンロードが開始されました！');
+            } catch (error) {
+                console.error('エラー:', error);
+                alert('ファイルのダウンロード中にエラーが発生しました。');
+            }
+        });
+    </script>
+</body>
+</html>
